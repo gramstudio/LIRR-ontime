@@ -8,38 +8,36 @@ async function scrapeData() {
 
   // Name the files after the timestamp
   const filenameJson = `${timestamp}.json`;
-  //   const filenameCsv = `${timestamp}.csv`;
+  const filenameCsv = `${timestamp}.csv`;
 
   // Define the paths
-  const jsonPath = path.join(
-    __dirname,
-    "..",
-    "..",
-    "data",
-    "json",
-    filenameJson
-  );
+  const baseDir = path.resolve(__dirname, "..", "..");
+  const jsonPath = path.join(baseDir, "data", "json", filenameJson);
+  const csvPath = path.join(baseDir, "data", "csv", filenameCsv);
 
   // Grab the data from the API
   const response = await fetch(
-    "https://backend-unified.mylirr.org/locations?geometry=NONE&railroad=BOTH",
+    "https://backend-unified.mylirr.org/locations?geometry=NONE&railroad=LIRR",
     {
       headers: { "Accept-Version": "3.0" },
     }
   );
 
-  const resp = await response.json();
-  const data = resp.filter((item) => item.railroad === "LIRR");
+  // filter and transform the data
+  const data = await response.json();
 
-  // Save the data in the data hold folder
+  // Save the data in the data/json folder
   fs.writeFileSync(jsonPath, JSON.stringify(data));
 
-  // Convert the file into a csv
-  // You'll need a library or custom function to convert JSON to CSV
-  // For example, using the 'json2csv' library:
-  // const { parse } = require('json2csv');
-  // const csv = parse(data);
-  // fs.writeFileSync(csvPath, csv);
+  // Save the data in the data/csv folder
+  const { AsyncParser } = await import("@json2csv/node");
+  const opts = {};
+  const transformOpts = {};
+  const asyncOpts = {};
+  const parser = new AsyncParser(opts, asyncOpts, transformOpts);
+
+  const csv = await parser.parse(data).promise();
+  fs.writeFileSync(csvPath, csv);
 
   console.log(data);
 }
