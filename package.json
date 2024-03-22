@@ -1,0 +1,19 @@
+{
+  "name": "lirr-ontime",
+  "version": "1.0.0",
+  "description": "A JS scraper of LIRR's schedule",
+  "main": "src/js/index.js",
+  "scripts": {
+    "start": "node src/js/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gramstudio/LIRR-ontime.git"
+  },
+  "author": "Gerald Rich <gerald@gram.studio>",
+  "license": "AGPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/gramstudio/LIRR-ontime/issues"
+  },
+  "homepage": "https://github.com/gramstudio/LIRR-ontime#readme"
+}
