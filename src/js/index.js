@@ -1,8 +1,8 @@
-const fetch = require("node-fetch");
 const fs = require("fs");
 const path = require("path");
 
 async function scrapeData() {
+  const fetch = (await import("node-fetch")).default;
   // Get the current timestamp
   const timestamp = Date.now();
 
