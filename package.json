@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "A JS scraper of LIRR's schedule",
   "main": "src/js/index.js",
+  "type": "module",
   "scripts": {
     "start": "node src/js/index.js"
   },
@@ -17,7 +18,8 @@
   },
   "homepage": "https://github.com/gramstudio/LIRR-ontime#readme",
   "dependencies": {
-    "@json2csv/node": "^7.0.6",
+    "@googleapis/sheets": "^5.0.5",
+    "d3-dsv": "^3.0.1",
     "node-fetch": "^3.3.2"
   }
 }

@@ -8,8 +8,8 @@
 npm-debug.log*
 
 # data
-data/*/**
-!data/*/.*keep
+data/*
+!data/**/.keep
 
 # misc
 .DS_Store
