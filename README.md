@@ -12,7 +12,7 @@ This project aims to analyze the on-time performance of the Long Island Rail Roa
 
 ## Installation
 
-1. Clone the repository: `git clone https://github.com/your-username/lirr-ontime.git`
+1. Clone the repository: `git clone https://github.com/gramstudio/lirr-ontime.git`
 2. Install the required dependencies: `npm install`
 
 ## Usage
