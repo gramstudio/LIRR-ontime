@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/gramstudio/LIRR-ontime/issues"
   },
-  "homepage": "https://github.com/gramstudio/LIRR-ontime#readme"
+  "homepage": "https://github.com/gramstudio/LIRR-ontime#readme",
+  "dependencies": {
+    "node-fetch": "^3.3.2"
+  }
 }
