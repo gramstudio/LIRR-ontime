@@ -2,7 +2,7 @@
 
 ## Description
 
-This project aims to analyze the on-time performance of the Long Island Rail Road (LIRR) trains.
+Scraping & analyzing the on-time performance of the Long Island Rail Road (LIRR) trains.
 
 ## Features
 
