@@ -5,7 +5,7 @@
   "main": "src/js/index.js",
   "type": "module",
   "scripts": {
-    "start": "node src/js/index.js"
+    "start": "tsx src/ts/index.ts"
   },
   "repository": {
     "type": "git",
@@ -20,6 +20,12 @@
   "dependencies": {
     "@googleapis/sheets": "^5.0.5",
     "d3-dsv": "^3.0.1",
-    "node-fetch": "^3.3.2"
+    "google-auth-library": "^9.7.0"
+  },
+  "devDependencies": {
+    "@types/d3-dsv": "^3.0.7",
+    "@types/node": "^20.11.30",
+    "tsx": "^4.7.1",
+    "typescript": "^5.4.3"
   }
 }
