@@ -8,10 +8,12 @@
       "type": "node",
       "request": "launch",
       "name": "Launch Program",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["tsx"],
       "skipFiles": [
         "<node_internals>/**"
       ],
-      "program": "${workspaceFolder}/src/js/index.js"
+      "program": "${workspaceFolder}/src/ts/index.ts"
     }
   ]
 }
