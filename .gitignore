@@ -3,6 +3,9 @@
 # dependencies
 /node_modules
 
+# environment
+.env
+lirr-nyp-scraper.json
 
 # debug
 npm-debug.log*

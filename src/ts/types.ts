@@ -1,4 +1,4 @@
-export default interface Train {
+export interface Train {
   train_id: string;
   railroad: string;
   run_date: string;
@@ -88,4 +88,19 @@ interface Stop {
   bus: boolean;
   occupancy: string;
   track_change?: boolean;
+}
+
+export interface Row {
+  train_id: string;
+  train_num: string;
+  direction: string;
+  departure_station: string;
+  final_station: string;
+  departure_sched: string;
+  departure_time: string;
+  departure_2min_delay: boolean;
+  final_sched: string;
+  final_time: string;
+  final_3min_delay: boolean;
+  [key: string]: string | number | boolean;
 }
