@@ -1,4 +1,4 @@
-name: Automated Scraper
+name: Scraper
 
 on:
   # schedule:
@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  run:
     runs-on: ubuntu-latest
     env:
       NODE_ENV: production
