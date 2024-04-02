@@ -9,7 +9,7 @@ dotenv.config();
  * @returns {sheets_v4.Sheets} The Google Sheets API client.
  */
 const googleAuth = () => {
-  const key = JSON.parse(env.G_SHEET_TOKEN || ""); // service-account-000@docs-feedbacks.iam.gserviceaccount.com'
+  const key = JSON.parse(env.G_SERVICE_TOKEN || "");
   const jwtAuth = new JWT({
     email: key.client_email,
     key: key.private_key,
