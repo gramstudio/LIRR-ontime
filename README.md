@@ -2,13 +2,14 @@
 
 ## Description
 
-Scraping & analyzing the on-time performance of the Long Island Rail Road (LIRR) trains.
+This project is a scraper and analyzer for the on-time performance of the Long Island Rail Road (LIRR) trains. It fetches data from the LIRR's backend, processes it, and writes it to JSON and CSV files. It also prepares the data for Google Sheets.
 
 ## Features
 
-- Collects data on train schedules and delays
-- (WIP) 🚧 Analyzes on-time performance metrics
-- (WIP) 🚧 Generates reports
+- Collects data on train schedules and delays from the LIRR's backend
+- Processes the data to calculate on-time performance metrics
+- Writes the processed data to JSON and CSV files
+- Prepares the data for Google Sheets
 
 ## Installation
 
@@ -17,9 +18,19 @@ Scraping & analyzing the on-time performance of the Long Island Rail Road (LIRR)
 
 ## Setup
 
-To write to Google Sheets, you will need a service account key with editor permissions. Otherwise, pipe the output to your preferred data storage.
+1. To write to Google Sheets, you will need a service account key with editor permissions. Otherwise, pipe the output to your preferred data storage.
+2. Copy the `.env.example` file to a new file named `.env`: `cp .env.example .env`
+3. Open the `.env` file and fill in the values for `G_SHEET_TOKEN`, `G_SHEET_ID`, and `G_EMAIL`.
 
 ## Usage
 
-1. Run the application: `npm start`
-2. Open your browser and navigate to `http://localhost:3000`
+1. Run the script with `npm start`. This will fetch the data, process it, and write it to JSON and CSV files in the `data` directory. It will also prepare the data for Google Sheets.
+2. Check the console for any logs or errors.
+
+## Development
+
+The project is written in TypeScript and uses the Google Sheets API to write data to Google Sheets. It also uses the `d3-dsv` library to format the data as CSV, and `dayjs` for date and time manipulation.
+
+The main script is `src/ts/index.ts`, which fetches the data, processes it, and writes it. The data processing is done in `src/ts/prepData.ts`, and the writing is done in `src/ts/writeData.ts`.
+
+You can debug the script using the configuration provided in `.vscode/launch.json`.
