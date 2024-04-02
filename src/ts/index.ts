@@ -5,29 +5,35 @@ import fetchSheet from "./fetchSheet";
 import prepData from "./prepData";
 
 dotenv.config();
-const main = async () => {
-  // Grab the data from the API
-  const response = fetch(
+
+const fetchLirrData = async () => {
+  const response = await fetch(
     "https://backend-unified.mylirr.org/locations?geometry=NONE&railroad=LIRR",
     {
       headers: { "Accept-Version": "3.0" },
     }
   );
+  return await response.json();
+};
 
-  // fetch the data from the Google Sheet and the LIRR API
+const updateSheet = async (spreadsheetId: string) => {
+  const [sheetData, lirrData] = await Promise.all([
+    fetchSheet(spreadsheetId),
+    fetchLirrData(),
+  ]);
+
+  const updatedData = prepData({ sheetData, lirrData });
+
+  await writeData(updatedData, spreadsheetId);
+  console.info("Spreadsheet updated successfully");
+};
+
+const main = async () => {
   try {
-    const [sheetData, lirrResp] = await Promise.all([
-      fetchSheet({ id: env.G_SHEET_ID || "", sheetId: 0 }),
-      response,
-    ]);
-    const updatedData = prepData({
-      sheetData,
-      lirrData: await lirrResp.json(),
-    });
-    await writeData(updatedData);
+    await updateSheet(env.G_SHEET_ID as string);
   } catch (e) {
     console.error(e);
-    throw new Error();
+    throw new Error(`Failed to update spreadsheet\n\n${e}`);
   }
 };
 

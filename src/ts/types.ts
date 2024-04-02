@@ -91,6 +91,7 @@ interface Stop {
 }
 
 export interface Row {
+  [key: string]: string | number;
   train_id: string;
   train_num: string;
   direction: string;
@@ -98,9 +99,12 @@ export interface Row {
   final_station: string;
   departure_sched: string;
   departure_time: string;
-  departure_2min_delay: boolean;
+  departure_2min_delay: string;
   final_sched: string;
   final_time: string;
-  final_3min_delay: boolean;
-  [key: string]: string | number | boolean;
+  final_3min_delay: string;
+  update_day: string;
+  update_time: string;
+  update_date: string;
+  update_timestamp: number;
 }

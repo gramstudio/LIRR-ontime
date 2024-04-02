@@ -14,76 +14,45 @@ const createDataObject = (headerRow: string[], row: string[]) => {
   }, {} as Row);
 };
 
-/**
- * Fetches data from a Google Sheets spreadsheet.
- * @param id - The ID of the spreadsheet.
- * @param sheetId - The ID of the sheet within the spreadsheet (optional).
- * @returns A promise that resolves to an array of data objects representing the rows in the sheet.
- * @throws If there is an error when fetching the sheet.
- */
-const fetchSheet = async ({
-  id,
-  sheetId,
-}: {
-  id: string;
-  sheetId?: number;
-}): Promise<Row[]> => {
-  const client = googleAuth();
-  let sheetQ;
+const getValues = async (id: string) => {
   try {
-    const response = await client.spreadsheets.getByDataFilter({
+    const client = googleAuth();
+    const response = await client.spreadsheets.values.get({
       spreadsheetId: id,
-      fields: "sheets(properties(title))",
-      requestBody:
-        sheetId === undefined
-          ? undefined
-          : { dataFilters: [{ gridRange: { sheetId: sheetId } }] },
+      range: "Sheet1",
     });
-    sheetQ = response.data;
+    return response.data.values || [];
   } catch (e) {
     console.error(`Error when fetching sheet with spreadsheetId ${id}`);
     throw new Error(`Failed to fetch the sheet\n\n${e}`);
   }
+};
 
-  if (sheetQ && sheetQ.sheets) {
-    const ranges = sheetQ.sheets.map(
-      (sheet) => `'${sheet.properties?.title ?? ""}'`
-    );
+/**
+ * Fetches data from a Google Sheets spreadsheet.
+ * @param id - The ID of the spreadsheet.
+ * @returns A promise that resolves to an array of data objects representing the rows in the sheet.
+ * @throws If there is an error when fetching the sheet.
+ */
+const fetchSheet = async (id: string): Promise<Row[]> => {
+  const [headerRow, ...dataRows] = await getValues(id);
+  let dataObjects = dataRows.map((row) => createDataObject(headerRow, row));
 
-    const nameQ = await client.spreadsheets.values.get({
-      spreadsheetId: id,
-      range: ranges?.[0],
-    });
-
-    const [headerRow, ...dataRows] = nameQ.data.values ?? [];
-    let dataObjects = dataRows.map((row) => createDataObject(headerRow, row));
-
-    if (dataObjects.length === 0) {
-      const emptyDataObject = headerRow.reduce((obj, key) => {
-        obj[key] = "";
-        return obj;
-      }, {});
-      dataObjects.push(emptyDataObject);
-    }
-
-    return dataObjects as Row[];
-  } else {
-    return [
-      {
-        train_id: "",
-        train_num: "",
-        direction: "",
-        departure_station: "",
-        final_station: "",
-        departure_sched: "",
-        departure_time: "",
-        departure_2min_delay: false,
-        final_sched: "",
-        final_time: "",
-        final_3min_delay: false,
-      },
-    ];
+  if (headerRow.length === 0) {
+    throw new Error(`No headers found in sheet with spreadsheetId ${id}`);
   }
+
+  // convert the array of arrays to an empty data object if no data rows are found
+  if (dataObjects.length === 0) {
+    const emptyDataObject = headerRow.reduce((obj, key) => {
+      obj[key] = "";
+      return obj;
+    }, {});
+    dataObjects.push(emptyDataObject);
+  }
+
+  console.info(`Fetched sheet with spreadsheetId ${id}`);
+  return dataObjects as Row[];
 };
 
 export default fetchSheet;

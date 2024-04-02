@@ -1,53 +1,46 @@
 import type { Train, Row } from "./types";
+import { diffInMins, toNyTime, getCurrentTimestamp } from "./timeUtils";
 
 /**
- * Calculates the difference in minutes between two timestamps.
- * @param t1 - The first timestamp in seconds.
- * @param t2 - The second timestamp in seconds (optional).
- * @returns The difference in minutes between the two timestamps.
+ * Checks if a train is a revenue train.
+ * @param train - The train object to check.
+ * @returns True if the train is a revenue train, false otherwise.
  */
-const diffInMins = (t1: number, t2?: number) => {
-  if (!t2) return;
-  const t2Date = new Date(t2 * 1000);
-  const t1Date = new Date(t1 * 1000);
-
-  // Calculate the difference in minutes
-  let diff = (t2Date.getTime() - t1Date.getTime()) / 1000;
-  diff /= 60;
-  return Math.abs(diff);
+const isRevenue = (train: Train): boolean => {
+  return train.details.stops.length > 0;
 };
 
 /**
- * Converts a UNIX timestamp to New York time.
- * @param timestamp - The UNIX timestamp to convert.
- * @returns The New York time in the format "HH:mm" (24-hour format).
+ * Checks if a train is delayed based on the scheduled and actual times.
+ * @param scheduled - The scheduled time in minutes.
+ * @param actual - The actual time in minutes.
+ * @param condition - The delay condition in minutes.
+ * @returns True if the train is delayed, false otherwise.
  */
-const toNyTime = (timestamp: number) => {
-  return new Date(timestamp * 1000).toLocaleString("en-US", {
-    timeZone: "America/New_York",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  });
+const isDelayed = (scheduled: number, actual: number, condition: number) => {
+  return (diffInMins(scheduled, actual) || 0) >= condition;
 };
 
 /**
- * Creates a new row object based on the provided row and train data.
+ * Creates a new row object based on the given row and train.
  * @param row - The original row object.
  * @param train - The train object.
- * @returns The new row object with additional properties.
+ * @returns The new row object.
+ * @throws {Error} If `train_id` is not provided in `row`.
  */
 const createRow = (
-  row: Row | { train_id: string; train_num: string },
+  row: {
+    train_id: string;
+    train_num: string;
+  } & Partial<Omit<Row, "train_id" | "train_num">>,
   train: Train
-) => {
+): Row => {
   const depart = train.details.stops[0];
   const final = train.details.stops[train.details.stops.length - 1];
 
-  if (!depart || !final) {
-    console.log({ train });
-    return row as Row;
-  }
+  // Log the train if the departure or final station is missing
+  (!depart || !final) && console.log(JSON.stringify(train, null, 2));
+
   return {
     ...row,
     direction: train.details.direction,
@@ -58,40 +51,54 @@ const createRow = (
       ? toNyTime(depart.act_depart_time)
       : "",
     departure_2min_delay:
-      (diffInMins(depart.sched_time, depart.act_depart_time) || 0) >= 2,
+      depart.act_depart_time &&
+      isDelayed(depart.sched_time, depart.act_depart_time, 2)
+        ? "x"
+        : "",
     final_sched: toNyTime(final.sched_time),
     final_time: final.act_time ? toNyTime(final.act_time) : "",
-    final_3min_delay: (diffInMins(final.sched_time, final.act_time) || 0) >= 3,
+    final_3min_delay:
+      final.act_time && isDelayed(final.sched_time, final.act_time, 3)
+        ? "x"
+        : "",
+    ...getCurrentTimestamp(),
   };
 };
 
 /**
- * Prepares the data by combining the sheet data and LIRR data.
- * @param sheetData - The sheet data array.
- * @param lirrData - The LIRR data array.
- * @returns The prepared data array.
+ * Processes the existing sheet data and returns the updated rows.
+ * @param sheetData - The original sheet data.
+ * @param lirrData - The LIRR data.
+ * @returns The updated rows.
  */
-const prepData = ({
-  sheetData,
-  lirrData,
-}: {
-  sheetData: Row[];
-  lirrData: Train[];
-}) => {
-  const updatedSheet = sheetData.reduce((acc, row) => {
+const processSheetData = (sheetData: Row[], lirrData: Train[]): Row[] => {
+  return sheetData.reduce((acc, row) => {
     const train = lirrData.find((train) => train.train_id === row.train_id);
-    if (train && train.details.stops.length > 0) {
+    // If the train is found and is a revenue train, create a new row
+    if (train && isRevenue(train)) {
       acc.push(createRow(row, train));
+      // If the train is not found, push the row as is
     } else if (row.train_id) {
       acc.push(row);
     }
     return acc;
   }, [] as Row[]);
+};
 
+/**
+ * Processes the new trains and returns the new rows.
+ * @param sheetData - The original sheet data.
+ * @param lirrData - The LIRR data.
+ * @returns The new rows.
+ */
+const processNewTrains = (sheetData: Row[], lirrData: Train[]): Row[] => {
   const newTrains = lirrData.filter(
-    (train) => !sheetData.some((row) => row.train_id === train.train_id)
+    (train) =>
+      !sheetData.some((row) => row.train_id === train.train_id) &&
+      isRevenue(train)
   );
-  const newRows = newTrains.map((train) =>
+
+  return newTrains.map((train) =>
     createRow(
       {
         train_id: train.train_id,
@@ -101,6 +108,24 @@ const prepData = ({
       train
     )
   );
+};
+
+/**
+ * Prepares the data by processing the sheet data and new trains.
+ * @param sheetData - The original sheet data.
+ * @param lirrData - The LIRR data.
+ * @returns The prepared data.
+ */
+const prepData = ({
+  sheetData,
+  lirrData,
+}: {
+  sheetData: Row[];
+  lirrData: Train[];
+}): Row[] => {
+  const updatedSheet = processSheetData(sheetData, lirrData);
+  const newRows = processNewTrains(sheetData, lirrData);
+
   return [...updatedSheet, ...newRows];
 };
 
