@@ -16,19 +16,15 @@ const writeToFile = (updatedData: Row[]) => {
   const timestamp = new Date().toISOString();
 
   // Name the files after the timestamp
-  const filenameJson = `${timestamp}.json`;
   const filenameCsv = `${timestamp}.csv`;
 
-  // Define the paths
+  // Define the path
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = dirname(__filename);
   const baseDir = resolve(__dirname, "..", "..");
-  const jsonPath = join(baseDir, "data", "json", filenameJson);
   const csvPath = join(baseDir, "data", "csv", filenameCsv);
 
-  // Write the JSON & CSV files
-  fs.writeFileSync(jsonPath, JSON.stringify(updatedData));
-  console.info("Wrote JSON file:", filenameJson);
+  // Write the local CSV files
   const csv = csvFormat(updatedData);
   console.info("Wrote CSV file:", filenameCsv);
   fs.writeFileSync(csvPath, csv);
