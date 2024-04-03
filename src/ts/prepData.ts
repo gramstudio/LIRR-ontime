@@ -41,26 +41,23 @@ const createRow = (
   // Log the train if the departure or final station is missing
   (!depart || !final) && console.log(JSON.stringify(train, null, 2));
 
+  const actualDeparture = depart.act_depart_time || depart.act_time;
+  const finalArrival = final.act_arrive_time || final.act_time;
   return {
     ...row,
     direction: train.details.direction,
     departure_station: depart.code,
     final_station: final.code,
     departure_sched: toNyTime(depart.sched_time),
-    departure_time: depart.act_depart_time
-      ? toNyTime(depart.act_depart_time)
-      : "",
+    departure_time: actualDeparture ? toNyTime(actualDeparture) : "",
     departure_2min_delay:
-      depart.act_depart_time &&
-      isDelayed(depart.sched_time, depart.act_depart_time, 2)
+      actualDeparture && isDelayed(depart.sched_time, actualDeparture, 2)
         ? "x"
         : "",
     final_sched: toNyTime(final.sched_time),
-    final_time: final.act_time ? toNyTime(final.act_time) : "",
+    final_time: finalArrival ? toNyTime(finalArrival) : "",
     final_3min_delay:
-      final.act_time && isDelayed(final.sched_time, final.act_time, 3)
-        ? "x"
-        : "",
+      finalArrival && isDelayed(final.sched_time, finalArrival, 3) ? "x" : "",
     ...getCurrentTimestamp(),
   };
 };

@@ -76,6 +76,7 @@ interface Details {
 interface Stop {
   code: string;
   sched_time: number;
+  act_arrive_time?: number;
   act_depart_time?: number;
   act_time?: number;
   sign_track: string;
