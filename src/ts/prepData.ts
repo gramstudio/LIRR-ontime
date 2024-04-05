@@ -37,27 +37,41 @@ const createRow = (
 ): Row => {
   const depart = train.details.stops[0];
   const final = train.details.stops[train.details.stops.length - 1];
+  // Record Jamaica transfer times if they exist
+  const jamaica = train.details.stops.find(
+    (stop) => stop.code === "JAM" && stop !== depart && stop !== final
+  );
 
   // Log the train if the departure or final station is missing
   (!depart || !final) && console.log(JSON.stringify(train, null, 2));
 
-  const actualDeparture = depart.act_depart_time || depart.act_time;
-  const finalArrival = final.act_arrive_time || final.act_time;
+  const actualDepartureTime = depart.act_depart_time || depart.act_time;
+  const actualJamaciaTime = jamaica?.act_depart_time;
+  const actualArrivalTime = final.act_arrive_time || final.act_time;
   return {
     ...row,
     direction: train.details.direction,
     departure_station: depart.code,
     final_station: final.code,
     departure_sched: toNyTime(depart.sched_time),
-    departure_time: actualDeparture ? toNyTime(actualDeparture) : "",
+    departure_time: actualDepartureTime ? toNyTime(actualDepartureTime) : "",
     departure_2min_delay:
-      actualDeparture && isDelayed(depart.sched_time, actualDeparture, 2)
+      actualDepartureTime &&
+      isDelayed(depart.sched_time, actualDepartureTime, 2)
+        ? "x"
+        : "",
+    jamaica_sched: jamaica ? toNyTime(jamaica.sched_time) : "",
+    jamaica_time: actualJamaciaTime ? toNyTime(actualJamaciaTime) : "",
+    jamaica_3min_delay:
+      actualJamaciaTime && isDelayed(jamaica.sched_time, actualJamaciaTime, 3)
         ? "x"
         : "",
     final_sched: toNyTime(final.sched_time),
-    final_time: finalArrival ? toNyTime(finalArrival) : "",
+    final_time: actualArrivalTime ? toNyTime(actualArrivalTime) : "",
     final_3min_delay:
-      finalArrival && isDelayed(final.sched_time, finalArrival, 3) ? "x" : "",
+      actualArrivalTime && isDelayed(final.sched_time, actualArrivalTime, 3)
+        ? "x"
+        : "",
     ...getCurrentTimestamp(),
   };
 };

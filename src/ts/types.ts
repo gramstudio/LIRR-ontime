@@ -101,6 +101,9 @@ export interface Row {
   departure_sched: string;
   departure_time: string;
   departure_2min_delay: string;
+  jamaica_sched: string;
+  jamaica_time: string;
+  jamaica_3min_delay: string;
   final_sched: string;
   final_time: string;
   final_3min_delay: string;

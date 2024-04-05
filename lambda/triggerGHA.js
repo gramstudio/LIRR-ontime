@@ -5,7 +5,7 @@ import {
 } from "@aws-sdk/client-secrets-manager";
 
 export const handler = async () => {
-  const secretsManager = new SecretsManagerClient({ region: "us-west-1" }); // replace with your region
+  const secretsManager = new SecretsManagerClient({ region: "us-west-1" });
   const command = new GetSecretValueCommand({
     SecretId: process.env.GITHUB_TOKEN,
   });
