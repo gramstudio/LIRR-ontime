@@ -22,7 +22,7 @@
     "d3-dsv": "^3.0.1",
     "dayjs": "^1.11.10",
     "dotenv": "^16.4.5",
-    "google-auth-library": "^9.7.0"
+    "google-auth-library": "^9.9.0"
   },
   "devDependencies": {
     "@aws-sdk/client-secrets-manager": "^3.543.0",
