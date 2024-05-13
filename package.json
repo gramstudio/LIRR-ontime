@@ -25,7 +25,7 @@
     "google-auth-library": "^9.7.0"
   },
   "devDependencies": {
-    "@aws-sdk/client-secrets-manager": "^3.543.0",
+    "@aws-sdk/client-secrets-manager": "^3.575.0",
     "@types/d3-dsv": "^3.0.7",
     "@types/node": "^20.12.2",
     "tsx": "^4.7.1",
