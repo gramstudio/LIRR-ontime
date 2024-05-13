@@ -27,7 +27,7 @@
   "devDependencies": {
     "@aws-sdk/client-secrets-manager": "^3.543.0",
     "@types/d3-dsv": "^3.0.7",
-    "@types/node": "^20.12.2",
+    "@types/node": "^20.12.11",
     "tsx": "^4.7.1",
     "typescript": "^5.4.3"
   }
