@@ -28,7 +28,7 @@
     "@aws-sdk/client-secrets-manager": "^3.543.0",
     "@types/d3-dsv": "^3.0.7",
     "@types/node": "^20.12.2",
-    "tsx": "^4.7.1",
+    "tsx": "^4.15.6",
     "typescript": "^5.4.3"
   }
 }
